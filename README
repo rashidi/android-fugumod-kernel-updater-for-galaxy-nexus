@@ -1,6 +1,24 @@
-== FuguMOD KERNEL ==
-FuguMOD kernel is an open source Android kernel provided by Renaud Allard (nikademus on xda-developers). 
+FuguMOD Kernel Updater For Galaxy Nexus
+
+(C) 2012 Rashidi Zin ( http://goo.gl/mXPIv )
+
+This application is responsible for providing the latest version of FuguMOD Kernel and allow user to download it to their system.
+
+
+=== FuguMOD KERNEL ===
+
+FuguMOD kernel is an open source Android kernel provided by Renaud Allard (nikademus on XDA-Developers - http://forum.xda-developers.com/member.php?u=2859799). 
 
 Kernel source code: https://github.com/renaudallard/gnexus_kernel
 XDA-Developers thread: http://forum.xda-developers.com/showthread.php?t=1438417
 Official Page: http://fugumod.org/galaxy_nexus/
+
+
+=== SPECIAL THANKS TO ===
+
+Renaud Allard for giving me the chance to build an application related to his kernel. 
+
+
+=== COPYRIGHTS ===
+
+Icon and image being used in this application are fully owned by Renaud Allard.
