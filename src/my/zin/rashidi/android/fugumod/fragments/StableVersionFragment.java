@@ -21,6 +21,10 @@ import my.zin.rashidi.android.fugumod.R;
  * @since 1.0.0
  */
 public class StableVersionFragment extends Fragment {
+	
+	public StableVersionFragment() {
+		
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
