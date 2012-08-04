@@ -13,17 +13,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
-import android.widget.TextView;
 
 /**
  * @author shidi
  * @version 1.0.0
  * @since 1.0.0
  */
-public class GetConnection extends AsyncTask<Object, Void, String>{
-
-	private TextView tv;
-	private String content = null;
+public class GetConnection extends AsyncTask<String, Void, String>{
 	
 	@Override
 	protected void onPreExecute() {
@@ -35,18 +31,19 @@ public class GetConnection extends AsyncTask<Object, Void, String>{
 	 * 0 - TextView
 	 * 1 - String url
 	 */
-	protected String doInBackground(Object... params) {
-		this.tv = (TextView) params[0];
-		return this.getContent(String.valueOf(params[1]));
+	protected String doInBackground(String... params) {
+		return this.getContent(params[0]);
 	}
 	
 	private String getContent(String url) {
+		String content = null;
+		
 		try {
 			HttpClient client = new DefaultHttpClient();
 			HttpGet get = new HttpGet(url);
 			HttpResponse response = client.execute(get);
 			
-			 content = EntityUtils.toString(response.getEntity());
+			content = EntityUtils.toString(response.getEntity());
 		} catch	(ClientProtocolException cpe) {
 			cpe.printStackTrace();
 		} catch (IOException e) {
@@ -58,7 +55,7 @@ public class GetConnection extends AsyncTask<Object, Void, String>{
 
 	@Override
 	protected void onPostExecute(String result) {
-		tv.setText(content);
+		super.onPostExecute(result);
 	}
 
 }
