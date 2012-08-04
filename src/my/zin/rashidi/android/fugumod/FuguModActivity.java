@@ -1,5 +1,7 @@
 package my.zin.rashidi.android.fugumod;
 
+import my.zin.rashidi.android.fugumod.fragments.StableVersionFragment;
+import my.zin.rashidi.android.fugumod.fragments.TestingVersionFragment;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -9,16 +11,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class FuguModActivity extends FragmentActivity implements ActionBar.TabListener {
 
+	static final int NUM_ITEMS = 2;
+	
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
      * sections. We use a {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will
@@ -115,16 +114,16 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new DummySectionFragment();
-            Bundle args = new Bundle();
-            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-            fragment.setArguments(args);
-            return fragment;
+        	Fragment fragment = new TestingVersionFragment(); // By default we are loading the testing version
+        	
+        	if (i == 1) { fragment = new StableVersionFragment(); }
+        	
+        	return fragment;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return NUM_ITEMS;
         }
 
         @Override
@@ -138,23 +137,4 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
         }
     }
 
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
-        public DummySectionFragment() {
-        }
-
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            TextView textView = new TextView(getActivity());
-            textView.setGravity(Gravity.CENTER);
-            Bundle args = getArguments();
-            textView.setText(Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
-            return textView;
-        }
-    }
 }
