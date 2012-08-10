@@ -2,6 +2,7 @@
 
 A third-party application which allows user to get the latest versions of [FuguMOD Kernel][1].  
 
+
 ## Features
 
 - Retrieve available versions and allow user to download.
@@ -12,8 +13,9 @@ A third-party application which allows user to get the latest versions of [FuguM
 FuguMOD Kernel is a free, very stable and updated kernel developed by [Renaud Allard][2] for Galaxy Nexus.
 
 ### Links For FuguMOD Kernel
-	- [xda-developers][3]
-	- [github][4]
+
+- [xda-developers][3]
+- [github][4]
 
 
 # Copyrights
