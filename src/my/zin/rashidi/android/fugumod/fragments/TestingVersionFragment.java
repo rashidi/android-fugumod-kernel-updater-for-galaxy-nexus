@@ -5,8 +5,11 @@ package my.zin.rashidi.android.fugumod.fragments;
 
 import java.util.concurrent.ExecutionException;
 
-import my.zin.rashidi.android.fugumod.GetConnection;
 import my.zin.rashidi.android.fugumod.R;
+import my.zin.rashidi.android.fugumod.utils.ContentUtils;
+import my.zin.rashidi.android.fugumod.utils.GetConnection;
+
+import org.htmlcleaner.TagNode;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,14 +38,23 @@ public class TestingVersionFragment extends Fragment {
 		tv.setGravity(Gravity.LEFT);
 		
 		try {
-			content = new GetConnection().execute(getString(R.string.url_4_1_testing)).get();
+			content = new GetConnection().execute(getString(R.string.url_4_1_testing)).get();			
+			TagNode nodes[] = ContentUtils.getReleaseInfo(content);
+			
+			for (TagNode node : nodes) {
+				String href = node.getAttributes().get("href");
+				
+				if (href.indexOf("FuguMod") > 0 && href.indexOf("sha") < 0) { 
+					tv.setText(href); 
+				}
+			}
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
 		
-		tv.setText(content);
 		return tv;
 	}
 
