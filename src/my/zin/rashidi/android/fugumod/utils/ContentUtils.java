@@ -13,7 +13,6 @@ import org.htmlcleaner.TagNode;
  */
 public class ContentUtils {
 
-	@SuppressWarnings("unchecked")
 	public static TagNode[] getReleaseInfo(String content) {
 		
 		HtmlCleaner cleaner = new HtmlCleaner();
