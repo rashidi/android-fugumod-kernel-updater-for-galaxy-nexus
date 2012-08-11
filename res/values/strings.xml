@@ -2,12 +2,14 @@
 
     <string name="app_name">FuguMod Kernel Updater</string>
     <string name="title_section3">Section 3</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section1">Section 1</string>
+    <string name="title_stable_version">Stable Version</string>
+    <string name="title_testing_version">Testing Version</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_fugu_mod">FuguMod Kernel Updater</string>
-    <string name="url_4.1_stable">http://fugumod.org/galaxy_nexus/stable-4.1/</string><string name="url_4.1_testing">http://fugumod.org/galaxy_nexus/testing-4.1/</string>
+    <string name="url">http://fugumod.org/galaxy_nexus/</string><string name="url_4.1_stable">http://fugumod.org/galaxy_nexus/stable-4.1/</string>
+    <string name="url_4.1_testing">http://fugumod.org/galaxy_nexus/testing-4.1/</string>
+    
     
 
 </resources>
