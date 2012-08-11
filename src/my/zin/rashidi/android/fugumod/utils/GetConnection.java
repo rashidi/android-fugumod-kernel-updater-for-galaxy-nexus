@@ -1,7 +1,7 @@
 /**
  * 
  */
-package my.zin.rashidi.android.fugumod;
+package my.zin.rashidi.android.fugumod.utils;
 
 import java.io.IOException;
 
@@ -18,6 +18,8 @@ import android.os.AsyncTask;
  * @author shidi
  * @version 1.0.0
  * @since 1.0.0
+ * 
+ * Based on http://stackoverflow.com/questions/8669903/android-reading-the-html-of-a-webpage-into-a-string
  */
 public class GetConnection extends AsyncTask<String, Void, String>{
 	
