@@ -1,7 +1,6 @@
 package my.zin.rashidi.android.fugumod;
 
-import my.zin.rashidi.android.fugumod.fragments.StableVersionFragment;
-import my.zin.rashidi.android.fugumod.fragments.TestingVersionFragment;
+import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -94,7 +93,6 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
@@ -114,11 +112,9 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
 
         @Override
         public Fragment getItem(int i) {
-        	Fragment fragment = new TestingVersionFragment(); // By default we are loading the testing version
-        	
-        	if (i == 1) { fragment = new StableVersionFragment(); }
-        	
-        	return fragment;
+
+        	String url = (i == 0) ? getString(R.string.url_4_1_testing) : getString(R.string.url_4_1_stable);
+        	return new VersionListFragment(url);
         }
 
         @Override
