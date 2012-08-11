@@ -12,8 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import my.zin.rashidi.android.fugumod.GetConnection;
 import my.zin.rashidi.android.fugumod.R;
+import my.zin.rashidi.android.fugumod.utils.GetConnection;
 
 /**
  * @author shidi
