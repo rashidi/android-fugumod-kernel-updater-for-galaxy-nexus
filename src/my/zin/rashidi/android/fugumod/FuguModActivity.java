@@ -129,10 +129,10 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0: return getString(R.string.title_section1).toUpperCase();
-                case 1: return getString(R.string.title_section2).toUpperCase();
-                case 2: return getString(R.string.title_section3).toUpperCase();
+                case 0: return getString(R.string.title_testing_version).toUpperCase();
+                case 1: return getString(R.string.title_stable_version).toUpperCase();
             }
+            
             return null;
         }
     }
