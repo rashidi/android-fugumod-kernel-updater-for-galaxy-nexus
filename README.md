@@ -8,6 +8,10 @@ A third-party application which allows user to get the latest versions of [FuguM
 - Retrieve available versions and allow user to download.
 
 
+## Download
+
+This application is available at [Play Store][5]
+
 ## FuguMod Kernel
 
 FuguMod Kernel is a free, very stable and updated kernel developed by [Renaud Allard][2] for Galaxy Nexus.
@@ -27,3 +31,4 @@ The image being used as the icon launcher and logo on this repository is a prope
 [2]: http://forum.xda-developers.com/member.php?u=2859799
 [3]: http://forum.xda-developers.com/showthread.php?t=1438417
 [4]: https://github.com/renaudallard/gnexus_kernel
+[5]: https://play.google.com/store/apps/details?id=my.zin.rashidi.android.fugumod
