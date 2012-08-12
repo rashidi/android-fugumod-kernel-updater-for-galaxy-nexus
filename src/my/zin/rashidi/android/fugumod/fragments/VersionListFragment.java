@@ -7,16 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.htmlcleaner.TagNode;
-
 import my.zin.rashidi.android.fugumod.R;
 import my.zin.rashidi.android.fugumod.utils.ContentUtils;
 import my.zin.rashidi.android.fugumod.utils.GetConnection;
+
+import org.htmlcleaner.TagNode;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 /**
  * @author shidi
@@ -26,6 +30,10 @@ import android.widget.ListAdapter;
 public class VersionListFragment extends ListFragment {
 
 	private String url = null;
+	
+	public VersionListFragment() {
+		
+	}
 	
 	public VersionListFragment(String url) {
 		this.url = url;
@@ -40,7 +48,7 @@ public class VersionListFragment extends ListFragment {
 			List<String> releases = new ArrayList<String>();
 			
 			try {
-				String content = new GetConnection().execute(url).get();
+				String content = new GetConnection(activity).execute(url).get();
 				TagNode nodes[] = ContentUtils.getReleaseInfo(content);
 				
 				for (TagNode node : nodes) {
@@ -62,4 +70,14 @@ public class VersionListFragment extends ListFragment {
 		}
 	}
 
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		
+		String release = String.valueOf(getListView().getItemAtPosition(position));
+		
+		DialogFragment confirmationDialog = new ConfirmationDialogFragment(url, release);
+		confirmationDialog.show(getFragmentManager(), "dialog");
+	}
+	
 }
