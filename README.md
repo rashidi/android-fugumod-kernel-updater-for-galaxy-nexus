@@ -1,6 +1,6 @@
-# FuguMOD Kernel Updater For Galaxy Nexus
+# FuguMod Kernel Updater For Galaxy Nexus
 
-A third-party application which allows user to get the latest versions of [FuguMOD Kernel][1].  
+A third-party application which allows user to get the latest versions of [FuguMod Kernel][1].  
 
 
 ## Features
@@ -8,11 +8,11 @@ A third-party application which allows user to get the latest versions of [FuguM
 - Retrieve available versions and allow user to download.
 
 
-## FuguMOD Kernel
+## FuguMod Kernel
 
-FuguMOD Kernel is a free, very stable and updated kernel developed by [Renaud Allard][2] for Galaxy Nexus.
+FuguMod Kernel is a free, very stable and updated kernel developed by [Renaud Allard][2] for Galaxy Nexus.
 
-### Links For FuguMOD Kernel
+### Links For FuguMod Kernel
 
 - [xda-developers][3]
 - [github][4]
@@ -20,7 +20,7 @@ FuguMOD Kernel is a free, very stable and updated kernel developed by [Renaud Al
 
 # Copyrights
 
-The image being used as the icon launcher and logo on this repository is a property of Renaud Allard. Code unless being stated are developed by me. 
+The image being used as the icon launcher and logo on this repository is a property of Renaud Allard. 
 
 
 [1]: http://fugumod.org/galaxy_nexus/
