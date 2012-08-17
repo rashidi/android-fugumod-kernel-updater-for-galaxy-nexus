@@ -3,6 +3,9 @@
  */
 package my.zin.rashidi.android.fugumod.fragments;
 
+import static java.util.Collections.reverseOrder;
+import static java.util.Collections.sort;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -24,7 +27,7 @@ import android.widget.ListView;
 
 /**
  * @author shidi
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 public class VersionListFragment extends ListFragment {
@@ -58,6 +61,8 @@ public class VersionListFragment extends ListFragment {
 						releases.add(href);
 					}
 				}
+				
+				sort(releases, reverseOrder());
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
