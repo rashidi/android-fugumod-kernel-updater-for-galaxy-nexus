@@ -1,9 +1,12 @@
 package my.zin.rashidi.android.fugumod;
 
+import static my.zin.rashidi.android.fugumod.utils.ContentUtils.getAvailableVersions;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.renderscript.Program;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 public class FuguModActivity extends FragmentActivity implements ActionBar.TabListener {
 
 	static final int NUM_ITEMS = 2;
+	static String[] TITLES = new String[] { }; 
 	
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -36,9 +40,10 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
         setContentView(R.layout.activity_fugu_mod);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
+        // of the app.        
+        
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
+        
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -107,30 +112,28 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+            
+        	super(fm);
+            TITLES = getAvailableVersions();
         }
 
         @Override
         public Fragment getItem(int i) {
 
-        	String url = (i == 0) ? getString(R.string.url_4_1_testing) : getString(R.string.url_4_1_stable);
+        	String url = String.format("%s%s", getString(R.string.url), TITLES[i]);        	
         	return new VersionListFragment(url);
         }
 
         @Override
         public int getCount() {
-            return NUM_ITEMS;
+            return TITLES.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0: return getString(R.string.title_testing_version).toUpperCase();
-                case 1: return getString(R.string.title_stable_version).toUpperCase();
-            }
-            
-            return null;
+        	return TITLES[position].toUpperCase().replace("-", " ");
         }
+
     }
 
 }
