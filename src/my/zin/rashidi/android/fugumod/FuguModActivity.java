@@ -2,11 +2,14 @@ package my.zin.rashidi.android.fugumod;
 
 import static my.zin.rashidi.android.fugumod.utils.ContentUtils.getAvailableVersions;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.renderscript.Program;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -38,6 +41,7 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fugu_mod);
+                
         getActionBar().setDisplayHomeAsUpEnabled(true);
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.        
@@ -61,7 +65,7 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
                 actionBar.setSelectedNavigationItem(position);
             }
         });
-
+        
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
             // Create a tab with text corresponding to the page title defined by the adapter.
@@ -73,7 +77,7 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
                             .setTabListener(this));
         }
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_fugu_mod, menu);
@@ -97,8 +101,35 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        mViewPager.setCurrentItem(tab.getPosition());
+    public void onTabSelected(final ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        final ViewPager mViewPager = this.mViewPager;
+    	final ProgressDialog progressDialog = ProgressDialog.show(this, "", String.format("Preparing available downloads for %s" , tab.getText()));
+    	
+    	new Thread() {
+    		
+    		@SuppressLint("HandlerLeak")
+			@Override
+			public void run() {
+    			Looper.prepare();
+    			
+    			new Handler() {
+    				
+    				@Override
+					public void handleMessage(Message msg) { mViewPager.setCurrentItem(tab.getPosition()); }
+    			};
+    			
+    			new Handler().post(new Runnable() {
+					
+					@Override
+					public void run() { progressDialog.dismiss(); }
+				});
+    			
+    			Looper.loop();
+    		}
+    		
+    		
+    	}.start();
+    	
     }
 
     @Override
@@ -112,9 +143,8 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
-            
         	super(fm);
-            TITLES = getAvailableVersions();
+        	TITLES = getAvailableVersions();
         }
 
         @Override
