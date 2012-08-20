@@ -27,7 +27,7 @@ import android.widget.ListView;
 
 /**
  * @author shidi
- * @version 1.0.1
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class VersionListFragment extends ListFragment {
@@ -51,7 +51,7 @@ public class VersionListFragment extends ListFragment {
 			List<String> releases = new ArrayList<String>();
 			
 			try {
-				String content = new GetConnection(activity).execute(url).get();
+				String content = new GetConnection().execute(url).get();
 				TagNode nodes[] = ContentUtils.getReleaseInfo(content);
 				
 				for (TagNode node : nodes) {

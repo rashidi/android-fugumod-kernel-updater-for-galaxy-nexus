@@ -12,39 +12,19 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 
 /**
  * @author shidi
- * @version 1.0.1
+ * @version 1.1.0
  * @since 1.0.0
  * 
  * Based on http://stackoverflow.com/questions/8669903/android-reading-the-html-of-a-webpage-into-a-string
  */
 public class GetConnection extends AsyncTask<String, Integer, String>{
-	
-	private Context context;
 
-	private ProgressDialog progressdialog;
-	
 	public GetConnection() {
-		
-	}
 
-	public GetConnection(Context context) {
-		this.context = context;
-	}
-
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-		
-		if (context != null) {
-			progressdialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
-			progressdialog.show();
-		}
 	}
 	
 	@Override
@@ -72,15 +52,6 @@ public class GetConnection extends AsyncTask<String, Integer, String>{
 		}
 		
 		return content;
-	}
-
-	@Override
-	protected void onPostExecute(String result) {
-		super.onPostExecute(result);
-		
-		if (context != null) {
-			progressdialog.dismiss();
-		}
 	}
 
 }
