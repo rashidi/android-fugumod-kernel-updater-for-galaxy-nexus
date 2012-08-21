@@ -45,7 +45,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DownloadManager.Request request = new DownloadManager.Request(Uri.parse(String.format("%s%s", url, release)));
+						DownloadManager.Request request = new DownloadManager.Request(Uri.parse(String.format("%s/%s", url, release)));
 						request.setDescription(String.format("Downloading %s", release));
 						request.allowScanningByMediaScanner();
 						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
