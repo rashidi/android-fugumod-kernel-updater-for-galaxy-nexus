@@ -4,7 +4,6 @@
 package my.zin.rashidi.android.fugumod.utils;
 
 import static java.lang.String.format;
-import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
