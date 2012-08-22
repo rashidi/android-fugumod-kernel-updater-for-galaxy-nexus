@@ -3,15 +3,13 @@
  */
 package my.zin.rashidi.android.fugumod.fragments;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
+import my.zin.rashidi.android.fugumod.task.DownloadFilesTask;
 import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 
 /**
@@ -45,15 +43,8 @@ public class ConfirmationDialogFragment extends DialogFragment {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DownloadManager.Request request = new DownloadManager.Request(Uri.parse(String.format("%s/%s", url, release)));
-						request.setDescription(String.format("Downloading %s", release));
-						request.allowScanningByMediaScanner();
-						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-						request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, release);
-						
-						DownloadManager manager = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
-						manager.enqueue(request);
-						
+
+						new DownloadFilesTask(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED, getActivity()).execute(url, release);
 						dialog.dismiss();
 					}
 				})
