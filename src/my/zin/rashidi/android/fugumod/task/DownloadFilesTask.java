@@ -11,6 +11,7 @@ import android.app.DownloadManager;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentManager;
 
 /**
  * @author shidi
@@ -23,23 +24,29 @@ public class DownloadFilesTask extends AsyncTask<String, Integer, Long> {
 	private String release;
 	private int visibility;
 	private Activity activity;
+	private FragmentManager fragmentManager;
 	
 	public DownloadFilesTask() {
 		
 	}
 	
-	public DownloadFilesTask(int visibility, Activity activity) {
+	public DownloadFilesTask(int visibility, Activity activity, FragmentManager fragmentManager) {
 		this.visibility = visibility;
 		this.activity = activity;
+		this.fragmentManager = fragmentManager;
 	}
 	
 	@Override
 	protected Long doInBackground(String... params) {
-		this.url = params[0];
-		this.release = params[1];
+		url = params[0];
+		release = params[1];
 		
 		DownloadManager manager = (DownloadManager) activity.getSystemService(DOWNLOAD_SERVICE);
-		registerReceiver();
+		
+		if (!release.contains("sha256sum")) {
+			
+			registerReceiver(); 
+		}
 		
 		return manager.enqueue(getRequest());
 	}
@@ -55,9 +62,9 @@ public class DownloadFilesTask extends AsyncTask<String, Integer, Long> {
 	}
 	
 	private void registerReceiver() {
-		DownloadIntentReceiver receiver = new DownloadIntentReceiver();
+		DownloadIntentReceiver receiver = new DownloadIntentReceiver(release, fragmentManager);
 		IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-		
+
 		activity.registerReceiver(receiver, filter);
 	}
 
