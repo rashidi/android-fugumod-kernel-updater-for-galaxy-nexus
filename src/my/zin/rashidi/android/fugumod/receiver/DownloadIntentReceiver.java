@@ -3,7 +3,7 @@
  */
 package my.zin.rashidi.android.fugumod.receiver;
 
-import my.zin.rashidi.android.fugumod.fragments.RebootDialogFragment;
+import my.zin.rashidi.android.fugumod.fragments.FlashDialogFragment;
 import my.zin.rashidi.android.fugumod.utils.FuguModUtils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,7 +35,7 @@ public class DownloadIntentReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		
 		if (FuguModUtils.isMatchedSum(release)) {
-			DialogFragment dialog = new RebootDialogFragment(release);
+			DialogFragment dialog = new FlashDialogFragment(release);
 			dialog.show(fragmentManager, "dialog");
 			
 			context.unregisterReceiver(this);
