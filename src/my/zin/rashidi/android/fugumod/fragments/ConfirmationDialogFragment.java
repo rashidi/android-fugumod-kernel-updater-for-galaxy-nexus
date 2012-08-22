@@ -44,7 +44,9 @@ public class ConfirmationDialogFragment extends DialogFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
-						new DownloadFilesTask(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED, getActivity()).execute(url, release);
+						new DownloadFilesTask(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED, getActivity(), getFragmentManager()).execute(url, String.format("%s.sha256sum", release));
+						new DownloadFilesTask(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED, getActivity(), getFragmentManager()).execute(url, release);
+						
 						dialog.dismiss();
 					}
 				})

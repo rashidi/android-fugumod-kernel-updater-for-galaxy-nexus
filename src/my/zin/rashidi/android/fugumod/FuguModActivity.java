@@ -1,7 +1,8 @@
 package my.zin.rashidi.android.fugumod;
 
-import static my.zin.rashidi.android.fugumod.utils.ContentUtils.getAvailableVersions;
+import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.getAvailableVersions;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
+import my.zin.rashidi.android.fugumod.receiver.DownloadIntentReceiver;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -18,8 +19,7 @@ import android.view.MenuItem;
 
 public class FuguModActivity extends FragmentActivity implements ActionBar.TabListener {
 
-//	static int NUM_ITEMS = 2;
-	static String[] TITLES = new String[] { }; 
+	static String[] TITLES = getAvailableVersions();
 	
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -136,7 +136,6 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
 
         public SectionsPagerAdapter(FragmentManager fm) {
         	super(fm);
-        	TITLES = getAvailableVersions();
         }
 
         @Override
@@ -156,5 +155,13 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
         }
 
     }
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(new DownloadIntentReceiver());
+	}
+    
+    
 
 }
