@@ -4,21 +4,27 @@
 package my.zin.rashidi.android.fugumod.fragments;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
+import static com.stericson.RootTools.RootTools.isAccessGiven;
+import static com.stericson.RootTools.RootTools.log;
+import static java.lang.Long.valueOf;
+import static java.lang.Runtime.getRuntime;
+import static java.lang.String.format;
+import static java.lang.Thread.sleep;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.exec.ExecuteException;
-
+import my.zin.rashidi.android.fugumod.task.FlashTask;
 import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 
 /**
  * @author shidi
@@ -50,36 +56,35 @@ public class FlashDialogFragment extends DialogFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
-						try {
-							
-							/**
-							 * Steps involved:
-							 * 
-							 * 		1. Request for SU
-							 * 		2. Create a temporary directory. E.g. fuguMod
-							 * 		3. Unzip downloaded file into temporary directory
-							 * 		4. run dd if=/sdcard/Download/fuguMod/boot.img of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot
-							 * 		5. reboot
-							 */
-							
-							Process process = Runtime.getRuntime().exec("su");
-							
-							if (isRoot(process)) {
+						dialog.dismiss();
+						
+						try {							
+							if (isAccessGiven()) {
+								String downloadDir = format("%s/%s", "sdcard", DIRECTORY_DOWNLOADS);
 								
-								String tempDir = String.format("/%s/%s/%s", "sdcard", DIRECTORY_DOWNLOADS, "fuguMod");
-								Runtime.getRuntime().exec(String.format("%s %s", "mkdir", tempDir));
+								String tempDir = format("/%s/%s", downloadDir, getBaseName(file));
+								getRuntime().exec(format("%s %s", "mkdir", tempDir));
 								
-								Thread.sleep(1000);
-								
+								sleep(1000);
+
 								if (new File(tempDir).exists()) {
-									String target = String.format("/%s/%s/%s", "sdcard", DIRECTORY_DOWNLOADS, file);
-									Runtime.getRuntime().exec(String.format("%s %s -d %s", "unzip", target, tempDir));
+									String target = format("/%s/%s", downloadDir, file);
+									getRuntime().exec(format("%s %s -d %s", "unzip", target, tempDir));
+									
+									Long result = new FlashTask().execute(tempDir).get();
+									
+									if (result == valueOf(0)) {
+										String rmCmd = format("%s %s %s", "rm", "-fr", tempDir + "*");
+										getRuntime().exec(rmCmd);
+										
+										makeText(getActivity(), "Flash Success", LENGTH_LONG).show();
+									}
 								}
 							} else {
-								Log.i("fuguMod", "Failed to get root access.");
+								log("fuguMod", "Failed to get root access!");
 							}
 							
-						} catch (ExecuteException e) {
+						} catch (ExecutionException e) {
 							e.printStackTrace();
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -97,33 +102,5 @@ public class FlashDialogFragment extends DialogFragment {
 				});
 		
 		return builder.create();
-	}
-	
-	private boolean isRoot(Process process) {
-		
-		boolean retVal = false;
-		DataOutputStream output = new DataOutputStream(process.getOutputStream());
-		DataInputStream input = new DataInputStream(process.getInputStream());
-		
-		if (output != null && input != null) {
-			
-			try {
-				output.writeBytes("id\n");
-				output.flush();
-				
-				@SuppressWarnings("deprecation")
-				String uid = input.readLine();
-				boolean exitSu = false;
-				
-				if (uid.contains("uid=0")) {
-					retVal = true;
-					exitSu = true;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return retVal;
 	}
 }
