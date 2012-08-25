@@ -77,7 +77,7 @@ public class FlashDialogFragment extends DialogFragment {
 										String rmCmd = format("%s %s %s", "rm", "-fr", tempDir + "*");
 										getRuntime().exec(rmCmd);
 										
-										makeText(getActivity(), "Flash Success", LENGTH_LONG).show();
+										makeText(getActivity(), "FuguMod has been flashed.", LENGTH_LONG).show();
 									}
 								}
 							} else {
