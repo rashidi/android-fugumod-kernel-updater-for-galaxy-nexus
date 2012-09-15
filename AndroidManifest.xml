@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name=".receiver.DownloadIntentReceiver" android:enabled="true" />
+        <activity android:name=".DownloadActivity" android:label="@string/app_name"></activity>        
     </application>
 
 </manifest>
