@@ -2,7 +2,6 @@ package my.zin.rashidi.android.fugumod;
 
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.getAvailableVersions;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
-import my.zin.rashidi.android.fugumod.receiver.DownloadIntentReceiver;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -153,15 +152,10 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
         public CharSequence getPageTitle(int position) {
         	return TITLES[position].toUpperCase().replace("-", " ");
         }
-
     }
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(new DownloadIntentReceiver());
 	}
-    
-    
-
 }
