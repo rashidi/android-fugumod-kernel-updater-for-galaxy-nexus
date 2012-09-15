@@ -226,7 +226,7 @@ public class DownloadActivity extends FragmentActivity {
 		String image = format("%s/%s", targetDir, "boot.img");
 		
 		try {
-			debugMode = false;
+			debugMode = true;
 			
 			getShell(true).add(
 					new CommandCapture(0, 
