@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import my.zin.rashidi.android.fugumod.R;
-import my.zin.rashidi.android.fugumod.utils.ContentUtils;
+import my.zin.rashidi.android.fugumod.utils.FuguModUtils;
 import my.zin.rashidi.android.fugumod.utils.GetConnection;
 
 import org.htmlcleaner.TagNode;
@@ -52,7 +52,7 @@ public class VersionListFragment extends ListFragment {
 			
 			try {
 				String content = new GetConnection().execute(url).get();
-				TagNode nodes[] = ContentUtils.getReleaseInfo(content);
+				TagNode nodes[] = FuguModUtils.getReleaseInfo(content);
 				
 				for (TagNode node : nodes) {
 					String href = node.getAttributes().get("href");

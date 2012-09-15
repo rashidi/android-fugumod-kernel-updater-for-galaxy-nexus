@@ -3,15 +3,17 @@
  */
 package my.zin.rashidi.android.fugumod.fragments;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
+import static my.zin.rashidi.android.fugumod.R.string.release_ref;
+import static my.zin.rashidi.android.fugumod.R.string.release_zip;
+import static my.zin.rashidi.android.fugumod.R.string.target_url;
+import my.zin.rashidi.android.fugumod.DownloadActivity;
 import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.content.DialogInterface;
-import android.net.Uri;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 
 /**
@@ -45,16 +47,18 @@ public class ConfirmationDialogFragment extends DialogFragment {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						DownloadManager.Request request = new DownloadManager.Request(Uri.parse(String.format("%s%s", url, release)));
-						request.setDescription(String.format("Downloading %s", release));
-						request.allowScanningByMediaScanner();
-						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-						request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, release);
-						
-						DownloadManager manager = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
-						manager.enqueue(request);
-						
+
 						dialog.dismiss();
+						
+						SharedPreferences preferences = getActivity().getSharedPreferences(getString(release_ref), 0);
+						SharedPreferences.Editor editor = preferences.edit();
+						
+						editor.putString(getString(target_url), url);
+						editor.putString(getString(release_zip), String.format("%s", release));
+						editor.commit();
+
+						Intent intent = new Intent(getActivity(), DownloadActivity.class);
+						startActivity(intent);
 					}
 				})
 				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
