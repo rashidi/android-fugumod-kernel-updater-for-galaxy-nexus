@@ -31,6 +31,7 @@ import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 import static com.stericson.RootTools.RootTools.debugMode;
 import static com.stericson.RootTools.RootTools.getShell;
+import static com.stericson.RootTools.RootTools.getWorkingToolbox;
 import static java.lang.String.format;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -43,12 +44,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.stericson.RootTools.CommandCapture;
 
 /**
  * @author shidi
- * @version 1.1.0
+ * @version 1.1.1
  * @since 1.1.0
  * 
  * Based on tutorial at http://android-er.blogspot.com/2011/07/check-downloadmanager-status-and-reason.html
@@ -66,7 +70,7 @@ public class DownloadActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout.activity_fugu_mod);
+		setContentView(R.layout.activity_download);
 		
 		preferenceManager = getDefaultSharedPreferences(this);
 		downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -75,6 +79,9 @@ public class DownloadActivity extends FragmentActivity {
 		
 		String targetUrl = sharedPreferences.getString(getString(R.string.target_url), null);
 		release = sharedPreferences.getString(getString(R.string.release_zip), null);
+		
+		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
+		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
 		
 		DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s", targetUrl, release)));
 		request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
@@ -168,7 +175,7 @@ public class DownloadActivity extends FragmentActivity {
 					break;
 				}
 				
-				displayStatus("FAILED", failedReason);
+//				displayStatus("FAILED", failedReason);
 				break;
 				
 			case STATUS_PAUSED:
@@ -192,19 +199,19 @@ public class DownloadActivity extends FragmentActivity {
 					break;
 				}
 				
-				displayStatus("PAUSED", pausedReason);
+//				displayStatus("PAUSED", pausedReason);
 				break;
 				
 			case STATUS_PENDING:
-				displayStatus("PENDING", null);
+//				displayStatus("PENDING", null);
 				break;
 				
 			case STATUS_RUNNING:
-				displayStatus("RUNNING", null);
+//				displayStatus("RUNNING", null);
 				break;
 				
 			case STATUS_SUCCESSFUL:
-				displayStatus("SUCCESSFUL", null);
+//				displayStatus("SUCCESSFUL", null);
 				flashImage();
 				break;
 			}
@@ -222,24 +229,34 @@ public class DownloadActivity extends FragmentActivity {
 	
 	private void flashImage() {
 		
-		String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
-		String image = format("%s/%s", targetDir, "boot.img");
+		Button btnFlash = (Button) findViewById(R.id.buttonFlashKernel);
+		btnFlash.setEnabled(true);
 		
-		try {
-			debugMode = false;
+		btnFlash.setOnClickListener(new View.OnClickListener() {
 			
-			getShell(true).add(
-					new CommandCapture(0, 
-							format("mkdir %s", targetDir), 
-							format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
-							format("busybox dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", image),
-							format("rm -fr %s", targetDir)
-					)).waitForFinish();
-			
-			displayStatus("Flash Completed", null);
-			
-		} catch (Exception e) {
-			Log.e(getString(R.string.app_name), "Flashing failed: ", e);
-		}
+			@Override
+			public void onClick(View v) {
+				String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
+				String image = format("%s/%s", targetDir, "boot.img");
+				
+				try {
+					debugMode = true;
+					
+					getShell(true).add(
+							new CommandCapture(0, 
+									format("mkdir %s", targetDir), 
+									format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
+									format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
+									format("rm -fr %s", targetDir)
+							)).waitForFinish();
+					
+					TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
+					tvFlashCompleted.setText(getString(R.string.flash_completed));
+					
+				} catch (Exception e) {
+					Log.e(getString(R.string.app_name), "Flashing failed: ", e);
+				}
+			}
+		});
 	}
 }

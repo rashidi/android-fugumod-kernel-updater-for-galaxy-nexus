@@ -8,4 +8,8 @@
     <string name="release_ref">release_ref</string>
     <string name="release_zip">release_zip</string>
     <string name="target_url">target_url</string>
+    <string name="root">Root</string>
+    <string name="downloading">Downloading</string>
+    <string name="flash_kernel">Flash Kernel</string>
+    <string name="flash_completed">Flash completed. Please restart your device</string>
 </resources>
