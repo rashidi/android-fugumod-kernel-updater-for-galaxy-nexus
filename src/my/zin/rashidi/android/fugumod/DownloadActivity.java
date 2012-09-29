@@ -33,6 +33,9 @@ import static com.stericson.RootTools.RootTools.debugMode;
 import static com.stericson.RootTools.RootTools.getShell;
 import static com.stericson.RootTools.RootTools.getWorkingToolbox;
 import static java.lang.String.format;
+
+import java.io.File;
+
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -66,9 +69,11 @@ public class DownloadActivity extends FragmentActivity {
 	private DownloadManager downloadManager;
 	
 	private	String release;
+	private String targetUrl;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
+		
 		super.onCreate(arg0);
 		setContentView(R.layout.activity_download);
 		
@@ -77,24 +82,15 @@ public class DownloadActivity extends FragmentActivity {
 		
 		SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.release_ref), 0);
 		
-		String targetUrl = sharedPreferences.getString(getString(R.string.target_url), null);
+		targetUrl = sharedPreferences.getString(getString(R.string.target_url), null);
 		release = sharedPreferences.getString(getString(R.string.release_zip), null);
+
+		if (isFileExists(release)) return;
 		
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
 		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
 		
-		DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s", targetUrl, release)));
-		request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
-		request.setDescription(release);
-		request.allowScanningByMediaScanner();
-		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-		request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, release);
-		
-		long id = downloadManager.enqueue(request);
-
-		Editor editor = preferenceManager.edit();
-		editor.putLong(PREFERENCE_RELEASE_ID, id);
-		editor.commit();
+		requestDownload(release);
 	}
 	
 	@Override
@@ -258,5 +254,26 @@ public class DownloadActivity extends FragmentActivity {
 				}
 			}
 		});
+	}
+	
+	private void requestDownload(String filename) {
+		
+		DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s", targetUrl, filename)));
+		request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
+		request.setDescription(release);
+		request.allowScanningByMediaScanner();
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+		request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, release);
+		
+		long id = downloadManager.enqueue(request);
+
+		Editor editor = preferenceManager.edit();
+		editor.putLong(PREFERENCE_RELEASE_ID, id);
+		editor.commit();
+	}
+	
+	private boolean isFileExists(String filename) {
+		File file = new File(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, filename));
+		return file.exists();
 	}
 }
