@@ -32,9 +32,14 @@ import static android.widget.Toast.makeText;
 import static com.stericson.RootTools.RootTools.debugMode;
 import static com.stericson.RootTools.RootTools.getShell;
 import static com.stericson.RootTools.RootTools.getWorkingToolbox;
+import static com.stericson.RootTools.RootTools.isBusyboxAvailable;
+import static com.stericson.RootTools.RootTools.isRootAvailable;
+import static com.stericson.RootTools.RootTools.restartAndroid;
 import static java.lang.String.format;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -224,7 +229,20 @@ public class DownloadActivity extends FragmentActivity {
 	private void flashImage() {
 		
 		Button btnFlash = (Button) findViewById(R.id.buttonFlashKernel);
+		Button btnReboot = (Button) findViewById(R.id.buttonReboot);
+
+		final TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
+		
+		if (!isRootAvailable()) {
+			tvFlashCompleted.setText("Root privilege is required.");
+			return;
+		} else if (!isBusyboxAvailable()) {
+			tvFlashCompleted.setText("Busybox is required.");
+			return;
+		}
+		
 		btnFlash.setEnabled(true);
+		btnReboot.setEnabled(true);
 		
 		btnFlash.setOnClickListener(new View.OnClickListener() {
 			
@@ -232,7 +250,7 @@ public class DownloadActivity extends FragmentActivity {
 			public void onClick(View v) {
 				String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
 				String image = format("%s/%s", targetDir, "boot.img");
-				
+
 				try {
 					debugMode = true;
 					
@@ -243,12 +261,26 @@ public class DownloadActivity extends FragmentActivity {
 									format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
 									format("rm -fr %s", targetDir)
 							)).waitForFinish();
-					
-					TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
+
 					tvFlashCompleted.setText(getString(R.string.flash_completed));
 					
 				} catch (Exception e) {
+					tvFlashCompleted.setText("Flashing failed: "+e.getLocalizedMessage());
 					Log.e(getString(R.string.app_name), "Flashing failed: ", e);
+				}
+			}
+		});
+		
+		btnReboot.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				try {
+					getShell(true).add(new CommandCapture(1, "reboot"));
+				} catch (IOException e) {
+					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
+				} catch (TimeoutException e) {
+					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
 				}
 			}
 		});
