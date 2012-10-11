@@ -259,7 +259,7 @@ public class DownloadActivity extends FragmentActivity {
 									format("mkdir %s", targetDir), 
 									format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
 									format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
-									format("rm -fr %s", targetDir)
+									format("rm -r %s", targetDir)
 							)).waitForFinish();
 
 					tvFlashCompleted.setText(getString(R.string.flash_completed));
