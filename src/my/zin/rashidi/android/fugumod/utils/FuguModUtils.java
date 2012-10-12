@@ -3,6 +3,7 @@
  */
 package my.zin.rashidi.android.fugumod.utils;
 
+import static android.os.Environment.getExternalStorageDirectory;
 import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
@@ -22,7 +23,7 @@ import android.os.Environment;
 
 /**
  * @author shidi
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class FuguModUtils {
@@ -52,7 +53,7 @@ public class FuguModUtils {
 	}
 	
 	public static boolean isMatchedSum(String release) {
-		String file = String.format("/%s/%s/%s", "sdcard", Environment.DIRECTORY_DOWNLOADS, release);
+		String file = String.format("/%s/%s/%s", getExternalStorageDirectory().getPath(), Environment.DIRECTORY_DOWNLOADS, release);
 		
 		try {
 			InputStream input = new FileInputStream(file);
@@ -68,7 +69,11 @@ public class FuguModUtils {
 			e.printStackTrace();
 		}
 		
-		
 		return true;
+	}
+	
+	public static boolean isFileExists(String filename) {
+		File file = new File(filename);
+		return file.exists();
 	}
 }
