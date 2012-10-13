@@ -37,7 +37,9 @@ public class FlashActivity extends FragmentActivity {
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
+		
 		super.onCreate(arg0);
+		setContentView(R.layout.activity_download);
 				
 		SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.release_ref), 0);
 		String release = sharedPreferences.getString(getString(R.string.release_zip), null);
