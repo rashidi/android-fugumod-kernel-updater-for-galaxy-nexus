@@ -12,6 +12,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.codec.binary.Hex;
@@ -36,8 +39,11 @@ public class FuguModUtils {
 		return node.getElementsByName("a", true);
 	}
 	
-	public static String[] getAvailableVersions() {
+	public static String[] getTabs() {
 		String url = "http://fugumod.org/galaxy_nexus/versions.txt";
+		List<String> tabs = new ArrayList<String>();
+		
+		tabs.add("Downloaded");
 		String[] versions = new String[] { };
 		
 		try {
@@ -49,7 +55,9 @@ public class FuguModUtils {
 			e.printStackTrace();
 		}
 		
-		return versions;
+		if (versions.length > 0) { tabs.addAll(Arrays.asList(versions)); };
+		
+		return tabs.toArray(new String[0]);
 	}
 	
 	public static boolean isMatchedSum(String release) {
