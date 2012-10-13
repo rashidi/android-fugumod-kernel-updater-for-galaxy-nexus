@@ -25,7 +25,8 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".DownloadActivity" android:label="@string/app_name"></activity>        
+        <activity android:name=".DownloadActivity" android:label="@string/app_name"></activity>
+        <activity android:name=".FlashActivity" android:label="@string/app_name"></activity>
     </application>
 
 </manifest>
