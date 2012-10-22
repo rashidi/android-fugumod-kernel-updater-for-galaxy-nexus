@@ -26,21 +26,11 @@ import static android.app.DownloadManager.STATUS_RUNNING;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import static android.net.Uri.parse;
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
+import static android.os.Environment.getExternalStorageDirectory;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.widget.Toast.LENGTH_LONG;
-import static android.widget.Toast.makeText;
-import static com.stericson.RootTools.RootTools.debugMode;
-import static com.stericson.RootTools.RootTools.getShell;
-import static com.stericson.RootTools.RootTools.getWorkingToolbox;
-import static com.stericson.RootTools.RootTools.isBusyboxAvailable;
-import static com.stericson.RootTools.RootTools.isRootAvailable;
-import static com.stericson.RootTools.RootTools.restartAndroid;
 import static java.lang.String.format;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
+import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isFileExists;
+import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isMatchedSum;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -51,16 +41,11 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-
-import com.stericson.RootTools.CommandCapture;
 
 /**
  * @author shidi
- * @version 1.1.1
+ * @version 1.2.0
  * @since 1.1.0
  * 
  * Based on tutorial at http://android-er.blogspot.com/2011/07/check-downloadmanager-status-and-reason.html
@@ -68,7 +53,7 @@ import com.stericson.RootTools.CommandCapture;
 public class DownloadActivity extends FragmentActivity {
 
 	private final String PREFERENCE_RELEASE_ID = "releaseId";
-	private final String DIRECTORY_DOWNLOADS_FULL = format("/%s/%s", "sdcard", DIRECTORY_DOWNLOADS);
+	private final String DIRECTORY_DOWNLOADS_FULL = format("/%s/%s", getExternalStorageDirectory().getPath(), DIRECTORY_DOWNLOADS);
 
 	private SharedPreferences preferenceManager;
 	private DownloadManager downloadManager;
@@ -93,7 +78,7 @@ public class DownloadActivity extends FragmentActivity {
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
 		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
 		
-		if (!isFileExists(release)) { requestDownload(release); }
+		if (!isFileExists(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release))) { requestDownload(release); }
 	}
 	
 	@Override
@@ -174,7 +159,7 @@ public class DownloadActivity extends FragmentActivity {
 					break;
 				}
 				
-//				displayStatus("FAILED", failedReason);
+				displayStatus("FAILED", failedReason);
 				break;
 				
 			case STATUS_PAUSED:
@@ -197,21 +182,27 @@ public class DownloadActivity extends FragmentActivity {
 					pausedReason = "PAUSED_WAITING_FOR_RETRY";
 					break;
 				}
-				
-//				displayStatus("PAUSED", pausedReason);
+
+				displayStatus("Paused", pausedReason);
 				break;
 				
 			case STATUS_PENDING:
-//				displayStatus("PENDING", null);
 				break;
 				
 			case STATUS_RUNNING:
-//				displayStatus("RUNNING", null);
 				break;
 				
 			case STATUS_SUCCESSFUL:
-//				displayStatus("SUCCESSFUL", null);
-				flashImage();
+				
+				getCheckSumFile();
+				boolean verifiedCheckSum = verifyCheckSum();
+				
+				if (verifiedCheckSum) {
+					Intent intent = new Intent(this, FlashActivity.class);
+					startActivity(intent);
+				} else {
+					displayStatus("Failed", "Checksum does not match");
+				}
 				break;
 			}
 		}
@@ -219,81 +210,21 @@ public class DownloadActivity extends FragmentActivity {
 	
 	private void displayStatus(String status, String reason) {
 		
-		if (reason != null) {
-			makeText(this, format("%s: %s", status, reason), LENGTH_LONG).show();
-		} else {
-			makeText(this, format("%s", status), LENGTH_LONG).show();
-		}
-	}
-	
-	private void flashImage() {
-		
-		Button btnFlash = (Button) findViewById(R.id.buttonFlashKernel);
-		Button btnReboot = (Button) findViewById(R.id.buttonReboot);
-
 		final TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
 		
-		if (!isRootAvailable()) {
-			tvFlashCompleted.setText("Root privilege is required.");
-			return;
-		} else if (!isBusyboxAvailable()) {
-			tvFlashCompleted.setText("Busybox is required.");
-			return;
-		}
+		if (reason != null) { tvFlashCompleted.setText(format("%s: %s", status, reason)); } 
 		
-		btnFlash.setEnabled(true);
-		btnReboot.setEnabled(true);
-		
-		btnFlash.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
-				String image = format("%s/%s", targetDir, "boot.img");
-
-				try {
-					debugMode = true;
-					
-					getShell(true).add(
-							new CommandCapture(0, 
-									format("mkdir %s", targetDir), 
-									format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
-									format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
-									format("rm -r %s", targetDir)
-							)).waitForFinish();
-
-					tvFlashCompleted.setText(getString(R.string.flash_completed));
-					
-				} catch (Exception e) {
-					tvFlashCompleted.setText("Flashing failed: "+e.getLocalizedMessage());
-					Log.e(getString(R.string.app_name), "Flashing failed: ", e);
-				}
-			}
-		});
-		
-		btnReboot.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				try {
-					getShell(true).add(new CommandCapture(1, "reboot"));
-				} catch (IOException e) {
-					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
-				} catch (TimeoutException e) {
-					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
-				}
-			}
-		});
+		else { tvFlashCompleted.setText(format("%s", status)); }
 	}
-	
+		
 	private void requestDownload(String filename) {
 		
 		DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s", targetUrl, filename)));
 		request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
-		request.setDescription(release);
+		request.setDescription(filename);
 		request.allowScanningByMediaScanner();
 		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-		request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, release);
+		request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, filename);
 		
 		long id = downloadManager.enqueue(request);
 
@@ -302,8 +233,17 @@ public class DownloadActivity extends FragmentActivity {
 		editor.commit();
 	}
 	
-	private boolean isFileExists(String filename) {
-		File file = new File(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, filename));
-		return file.exists();
+	private void getCheckSumFile() {
+	
+		String file = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
+		if (!isFileExists(file)) {  
+			requestDownload(format("%s.sha256sum", release)); 			
+		}
+	}
+	
+	private boolean verifyCheckSum() {
+		
+		String file = format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release);
+		return isMatchedSum(file);
 	}
 }

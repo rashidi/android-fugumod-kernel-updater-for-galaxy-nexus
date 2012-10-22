@@ -1,6 +1,7 @@
 package my.zin.rashidi.android.fugumod;
 
-import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.getAvailableVersions;
+import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.getTabs;
+import my.zin.rashidi.android.fugumod.fragments.DownloadedList;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -18,7 +19,7 @@ import android.view.MenuItem;
 
 public class FuguModActivity extends FragmentActivity implements ActionBar.TabListener {
 
-	static String[] TITLES = getAvailableVersions();
+	static String[] TITLES = getTabs();
 	
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -139,8 +140,12 @@ public class FuguModActivity extends FragmentActivity implements ActionBar.TabLi
 
         @Override
         public Fragment getItem(int i) {
-        	String url = String.format("%s%s", getString(R.string.url), TITLES[i]);        	
-        	return new VersionListFragment(url);
+        	if (i > 0) {
+        		String url = String.format("%s%s", getString(R.string.url), TITLES[i]);        	
+        		return new VersionListFragment(url);
+        	} else {
+        		return new DownloadedList();
+        	}
         }
 
         @Override
