@@ -3,26 +3,24 @@
  */
 package my.zin.rashidi.android.fugumod.utils;
 
-import static android.os.Environment.getExternalStorageDirectory;
+import static com.stericson.RootTools.RootTools.getWorkingToolbox;
+import static com.stericson.RootTools.RootTools.sendShell;
 import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.readFileToString;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import android.os.Environment;
+import com.stericson.RootTools.RootToolsException;
 
 /**
  * @author shidi
@@ -60,20 +58,22 @@ public class FuguModUtils {
 		return tabs.toArray(new String[0]);
 	}
 	
-	public static boolean isMatchedSum(String release) {
-		String file = String.format("/%s/%s/%s", getExternalStorageDirectory().getPath(), Environment.DIRECTORY_DOWNLOADS, release);
+	public static boolean isMatchedSum(String file) {
 		
 		try {
-			InputStream input = new FileInputStream(file);
-			
-			String actual = new String(Hex.encodeHex(DigestUtils.sha256(input)));
 			String expected = readFileToString(new File(format("%s.sha256sum", file))).split(" ")[0];
 			
+			String cmd = format("%s sha256sum %s", getWorkingToolbox(), file);
+			String actual = sendShell(cmd, 0).get(0).split(" ")[0];
+
 			return expected.equals(actual);
-			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RootToolsException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}
 		
