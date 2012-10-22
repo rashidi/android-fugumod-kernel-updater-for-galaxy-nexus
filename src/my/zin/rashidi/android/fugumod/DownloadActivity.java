@@ -30,6 +30,7 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.String.format;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isFileExists;
+import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isMatchedSum;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -192,8 +193,16 @@ public class DownloadActivity extends FragmentActivity {
 				break;
 				
 			case STATUS_SUCCESSFUL:
-				Intent intent = new Intent(this, FlashActivity.class);
-				startActivity(intent);
+				
+				getCheckSumFile();
+				boolean verifiedCheckSum = verifyCheckSum();
+				
+				if (verifiedCheckSum) {
+					Intent intent = new Intent(this, FlashActivity.class);
+					startActivity(intent);
+				} else {
+					displayStatus("Failed", "Checksum does not match");
+				}
 				break;
 			}
 		}
@@ -222,5 +231,19 @@ public class DownloadActivity extends FragmentActivity {
 		Editor editor = preferenceManager.edit();
 		editor.putLong(PREFERENCE_RELEASE_ID, id);
 		editor.commit();
+	}
+	
+	private void getCheckSumFile() {
+	
+		String file = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
+		if (!isFileExists(file)) {  
+			requestDownload(format("%s.sha256sum", release)); 			
+		}
+	}
+	
+	private boolean verifyCheckSum() {
+		
+		String file = format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release);
+		return isMatchedSum(file);
 	}
 }
