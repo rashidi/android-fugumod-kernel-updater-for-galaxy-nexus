@@ -45,7 +45,7 @@ import android.widget.TextView;
 
 /**
  * @author shidi
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.1.0
  * 
  * Based on tutorial at http://android-er.blogspot.com/2011/07/check-downloadmanager-status-and-reason.html
@@ -76,9 +76,9 @@ public class DownloadActivity extends FragmentActivity {
 		release = sharedPreferences.getString(getString(R.string.release_zip), null);
 
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
-		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
+		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
 		
-		if (!isFileExists(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release))) { requestDownload(release); }
+		if (!isFileExists(getFile())) { requestDownload(release); }
 	}
 	
 	@Override
@@ -194,14 +194,17 @@ public class DownloadActivity extends FragmentActivity {
 				
 			case STATUS_SUCCESSFUL:
 				
-				getCheckSumFile();
-				boolean verifiedCheckSum = verifyCheckSum();
+				if (!isFileExists(getSumFile())) { 
+					requestDownload(format("%s.sha256sum", release));
+				}
 				
-				if (verifiedCheckSum) {
-					Intent intent = new Intent(this, FlashActivity.class);
-					startActivity(intent);
-				} else {
-					displayStatus("Failed", "Checksum does not match");
+				else {
+					if (verifyCheckSum()) {
+						Intent intent = new Intent(this, FlashActivity.class);
+						startActivity(intent);
+					} else {
+						displayStatus("Failed", "Checksum does not match");
+					}
 				}
 				break;
 			}
@@ -233,17 +236,9 @@ public class DownloadActivity extends FragmentActivity {
 		editor.commit();
 	}
 	
-	private void getCheckSumFile() {
+	private boolean verifyCheckSum() { return isMatchedSum(getFile()); }
 	
-		String file = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
-		if (!isFileExists(file)) {  
-			requestDownload(format("%s.sha256sum", release)); 			
-		}
-	}
+	private String getFile() { return (release != null) ? format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release) : null; }
 	
-	private boolean verifyCheckSum() {
-		
-		String file = format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release);
-		return isMatchedSum(file);
-	}
+	private String getSumFile() { return (getFile() != null) ? format("%s.sha256sum", getFile()) : null; } 
 }
