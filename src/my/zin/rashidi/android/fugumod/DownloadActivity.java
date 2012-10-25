@@ -45,7 +45,7 @@ import android.widget.TextView;
 
 /**
  * @author shidi
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.1.0
  * 
  * Based on tutorial at http://android-er.blogspot.com/2011/07/check-downloadmanager-status-and-reason.html
@@ -78,7 +78,7 @@ public class DownloadActivity extends FragmentActivity {
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
 		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
 		
-		if (!isFileExists(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release))) { requestDownload(release); }
+		if (!isFileExists(getFile())) { requestDownload(release); }
 	}
 	
 	@Override
@@ -235,15 +235,12 @@ public class DownloadActivity extends FragmentActivity {
 	
 	private void getCheckSumFile() {
 	
-		String file = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
-		if (!isFileExists(file)) {  
-			requestDownload(format("%s.sha256sum", release)); 			
-		}
+		if (!isFileExists(getSumFile())) { requestDownload(format("%s.sha256sum", release)); }
 	}
 	
-	private boolean verifyCheckSum() {
-		
-		String file = format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release);
-		return isMatchedSum(file);
-	}
+	private boolean verifyCheckSum() { return isMatchedSum(getFile()); }
+	
+	private String getFile() { return (release != null) ? format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release) : null; }
+	
+	private String getSumFile() { return (getFile() != null) ? format("%s.sha256sum", getFile()) : null; } 
 }
