@@ -44,7 +44,7 @@ public class FlashActivity extends FragmentActivity {
 		tvStatus.setText("Flashing ");
 		
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
-		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
+		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
 		
 		if ((release != null) && isFileExists(format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release))) { 
 			flashImage(release); 
