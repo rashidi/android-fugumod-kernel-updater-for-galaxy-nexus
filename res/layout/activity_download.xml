@@ -6,25 +6,16 @@
             android:id="@+id/buttonFlashKernel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dip"
+            android:layout_marginLeft="112dip"
             android:layout_marginTop="250dip"
             android:enabled="false"
             android:text="@string/flash_kernel" />
-
-		<Button
-            android:id="@+id/buttonReboot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dip"
-            android:layout_marginTop="250dip"
-            android:enabled="false"
-            android:text="@string/reboot" />
                 
         <TextView
             android:id="@+id/textViewStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="-260dip"
+            android:layout_marginLeft="-150dip"
             android:layout_marginRight="10dip"
             android:layout_marginTop="200dip"
             android:text="@string/downloading"
@@ -42,7 +33,7 @@
             android:id="@+id/textViewFlashCompleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="-160dip"
+            android:layout_marginLeft="-230dip"
             android:layout_marginTop="300dip"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />

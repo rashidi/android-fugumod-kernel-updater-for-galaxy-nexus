@@ -76,7 +76,7 @@ public class DownloadActivity extends FragmentActivity {
 		release = sharedPreferences.getString(getString(R.string.release_zip), null);
 
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
-		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf(".zip")));
+		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
 		
 		if (!isFileExists(getFile())) { requestDownload(release); }
 	}
