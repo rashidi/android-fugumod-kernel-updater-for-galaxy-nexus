@@ -6,17 +6,18 @@ package my.zin.rashidi.android.fugumod.fragments;
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 import static android.os.Environment.getExternalStorageDirectory;
 import static java.lang.String.format;
+import static java.util.Collections.reverseOrder;
+import static java.util.Collections.sort;
 import static my.zin.rashidi.android.fugumod.R.string.release_ref;
 import static my.zin.rashidi.android.fugumod.R.string.release_zip;
-import static my.zin.rashidi.android.fugumod.R.string.target_url;
 import static org.apache.commons.io.FileUtils.listFiles;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import my.zin.rashidi.android.fugumod.DownloadActivity;
 import my.zin.rashidi.android.fugumod.FlashActivity;
 import my.zin.rashidi.android.fugumod.R;
 import android.app.Activity;
@@ -31,7 +32,7 @@ import android.widget.ListView;
 
 /**
  * @author shidi
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.2.0
  */
 public class DownloadedList extends ListFragment {
@@ -69,6 +70,8 @@ public class DownloadedList extends ListFragment {
 		for (File file : files) {
 			if (file.getName().contains("kernel_FuguMod")) { fuguZips.add(file.getName()); }
 		}
+		
+		sort(fuguZips, reverseOrder());
 		
 		ListAdapter listAdapter = new ArrayAdapter<String>(activity, R.layout.row, fuguZips);
 		setListAdapter(listAdapter);
