@@ -12,10 +12,6 @@ import static com.stericson.RootTools.RootTools.isBusyboxAvailable;
 import static com.stericson.RootTools.RootTools.isRootAvailable;
 import static java.lang.String.format;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isFileExists;
-
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -28,7 +24,7 @@ import com.stericson.RootTools.CommandCapture;
 
 /**
  * @author shidi
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.2.0
  */
 public class FlashActivity extends FragmentActivity {
@@ -58,14 +54,12 @@ public class FlashActivity extends FragmentActivity {
 	private void flashImage(final String release) {
 		
 		Button btnFlash = (Button) findViewById(R.id.buttonFlashKernel);
-		Button btnReboot = (Button) findViewById(R.id.buttonReboot);
 		
 		if (!isRootAvailable()) { displayStatus("Flash Failed", "Root privilege is required.", true); } 
 		
 		else if (!isBusyboxAvailable()) { displayStatus("Flash Failed", "Busybox is required.", true); }
 		
 		btnFlash.setEnabled(true);
-		btnReboot.setEnabled(true);
 		
 		btnFlash.setOnClickListener(new View.OnClickListener() {
 			
@@ -74,19 +68,27 @@ public class FlashActivity extends FragmentActivity {
 
 				String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
 				String image = format("%s/%s", targetDir, "boot.img");
+				String checksum = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
 				
 				try {
 					debugMode = true;
 					
-					getShell(true).add(
-							new CommandCapture(0, 
-									format("mkdir %s", targetDir), 
-									format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
-									format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
-									format("rm -r %s", targetDir)
-							)).waitForFinish();
-
-					displayStatus(getString(R.string.flash_completed), null, false);
+					String currentText = ((Button) v).getText().toString();
+					
+					if (currentText.equals(getString(R.string.flash_kernel))) {
+						getShell(true).add(
+								new CommandCapture(0, 
+										format("mkdir %s", targetDir), 
+										format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
+										format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
+										format("rm -r %s %s", targetDir, checksum)
+								)).waitForFinish();
+						
+						((Button) v).setText(getString(R.string.reboot));
+						displayStatus(getString(R.string.flash_completed), null, false);
+					} else {
+						getShell(true).add(new CommandCapture(1, "reboot"));
+					}
 					
 				} catch (Exception e) {
 					displayStatus("Flashing failed", e.getLocalizedMessage(), true);
@@ -94,22 +96,7 @@ public class FlashActivity extends FragmentActivity {
 				}
 			}
 		});
-		
-		btnReboot.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				try {
-					getShell(true).add(new CommandCapture(1, "reboot"));
-				} catch (IOException e) {
-					displayStatus("Reboot failed", e.getLocalizedMessage(), true);
-					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
-				} catch (TimeoutException e) {
-					displayStatus("Reboot failed", e.getLocalizedMessage(), true);
-					Log.e(getString(R.string.app_name), "Reboot failed: ", e);
-				}
-			}
-		});
+
 	}
 	
 	private void displayStatus(String status, String reason, boolean error) {
