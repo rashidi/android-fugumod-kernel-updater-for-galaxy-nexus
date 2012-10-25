@@ -194,14 +194,17 @@ public class DownloadActivity extends FragmentActivity {
 				
 			case STATUS_SUCCESSFUL:
 				
-				getCheckSumFile();
-				boolean verifiedCheckSum = verifyCheckSum();
+				if (!isFileExists(getSumFile())) { 
+					requestDownload(format("%s.sha256sum", release));
+				}
 				
-				if (verifiedCheckSum) {
-					Intent intent = new Intent(this, FlashActivity.class);
-					startActivity(intent);
-				} else {
-					displayStatus("Failed", "Checksum does not match");
+				else {
+					if (verifyCheckSum()) {
+						Intent intent = new Intent(this, FlashActivity.class);
+						startActivity(intent);
+					} else {
+						displayStatus("Failed", "Checksum does not match");
+					}
 				}
 				break;
 			}
@@ -231,11 +234,6 @@ public class DownloadActivity extends FragmentActivity {
 		Editor editor = preferenceManager.edit();
 		editor.putLong(PREFERENCE_RELEASE_ID, id);
 		editor.commit();
-	}
-	
-	private void getCheckSumFile() {
-	
-		if (!isFileExists(getSumFile())) { requestDownload(format("%s.sha256sum", release)); }
 	}
 	
 	private boolean verifyCheckSum() { return isMatchedSum(getFile()); }
