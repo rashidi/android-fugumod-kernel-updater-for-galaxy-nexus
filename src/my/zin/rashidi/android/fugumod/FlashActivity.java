@@ -24,7 +24,7 @@ import com.stericson.RootTools.CommandCapture;
 
 /**
  * @author shidi
- * @version 1.3.0
+ * @version 1.5
  * @since 1.2.0
  */
 public class FlashActivity extends FragmentActivity {
@@ -79,7 +79,7 @@ public class FlashActivity extends FragmentActivity {
 						getShell(true).add(
 								new CommandCapture(0, 
 										format("mkdir %s", targetDir), 
-										format("unzip %s/%s -d %s", DIRECTORY_DOWNLOADS_FULL, release, targetDir),
+										format("%s unzip %s/%s -d %s", getWorkingToolbox(), DIRECTORY_DOWNLOADS_FULL, release, targetDir),
 										format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
 										format("rm -r %s %s", targetDir, checksum)
 								)).waitForFinish();
