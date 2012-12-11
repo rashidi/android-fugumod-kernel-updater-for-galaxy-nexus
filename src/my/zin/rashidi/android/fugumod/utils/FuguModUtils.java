@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -20,11 +19,13 @@ import java.util.concurrent.TimeoutException;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import android.os.Build;
+
 import com.stericson.RootTools.RootToolsException;
 
 /**
  * @author shidi
- * @version 1.2.0
+ * @version 1.6.0
  * @since 1.0.0
  */
 public class FuguModUtils {
@@ -36,24 +37,31 @@ public class FuguModUtils {
 		
 		return node.getElementsByName("a", true);
 	}
-	
+
 	public static String[] getTabs() {
+		
 		String url = "http://fugumod.org/galaxy_nexus/versions.txt";
 		List<String> tabs = new ArrayList<String>();
+		String release = Build.VERSION.RELEASE;
 		
 		tabs.add("Downloaded");
 		String[] versions = new String[] { };
 		
 		try {
 			versions = new GetConnection().execute(url).get().split("\\n");
-
+			
+			// We will only need the first three characters. E.g. 4.2
+			release = release.substring(0, Math.min(release.length(), 3));
+			
+			for (String version : versions) {
+				if (version.contains(release)) { tabs.add(version); }
+			}
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-		
-		if (versions.length > 0) { tabs.addAll(Arrays.asList(versions)); };
 		
 		return tabs.toArray(new String[0]);
 	}
