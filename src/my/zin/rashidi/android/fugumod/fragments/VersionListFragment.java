@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import my.zin.rashidi.android.fugumod.R;
+import my.zin.rashidi.android.fugumod.updater.R;
 import my.zin.rashidi.android.fugumod.utils.GetConnection;
 
 import org.htmlcleaner.TagNode;

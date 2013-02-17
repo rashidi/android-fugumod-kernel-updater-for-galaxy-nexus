@@ -3,10 +3,10 @@
  */
 package my.zin.rashidi.android.fugumod.fragments;
 
-import static my.zin.rashidi.android.fugumod.R.string.release_ref;
-import static my.zin.rashidi.android.fugumod.R.string.release_zip;
-import static my.zin.rashidi.android.fugumod.R.string.target_url;
-import my.zin.rashidi.android.fugumod.DownloadActivity;
+import static my.zin.rashidi.android.fugumod.updater.R.string.release_ref;
+import static my.zin.rashidi.android.fugumod.updater.R.string.release_zip;
+import static my.zin.rashidi.android.fugumod.updater.R.string.target_url;
+import my.zin.rashidi.android.fugumod.updater.DownloadActivity;
 import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;

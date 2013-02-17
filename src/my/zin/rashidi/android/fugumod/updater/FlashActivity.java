@@ -1,7 +1,7 @@
 /**
  * 
  */
-package my.zin.rashidi.android.fugumod;
+package my.zin.rashidi.android.fugumod.updater;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 import static android.os.Environment.getExternalStorageDirectory;
@@ -12,6 +12,7 @@ import static com.stericson.RootTools.RootTools.isBusyboxAvailable;
 import static com.stericson.RootTools.RootTools.isRootAvailable;
 import static java.lang.String.format;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isFileExists;
+import my.zin.rashidi.android.fugumod.updater.R;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
