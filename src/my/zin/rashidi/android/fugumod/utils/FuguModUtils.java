@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import my.zin.rashidi.android.fugumod.R;
+import my.zin.rashidi.android.fugumod.updater.R;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;

@@ -1,11 +1,12 @@
 
-package my.zin.rashidi.android.fugumod;
+package my.zin.rashidi.android.fugumod.updater;
 
 import static android.app.ProgressDialog.show;
 import static android.os.Looper.myLooper;
 import static android.os.Looper.prepare;
 import static java.lang.String.format;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.getTabs;
+import my.zin.rashidi.android.fugumod.updater.R;
 import my.zin.rashidi.android.fugumod.fragments.DownloadedList;
 import my.zin.rashidi.android.fugumod.fragments.VersionListFragment;
 import android.app.ActionBar;

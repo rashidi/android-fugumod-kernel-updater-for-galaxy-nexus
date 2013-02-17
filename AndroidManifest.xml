@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="my.zin.rashidi.android.fugumod"
+    package="my.zin.rashidi.android.fugumod.updater"
     android:versionCode="13"
     android:versionName="1.7.0" >
 

@@ -2,7 +2,7 @@
  * 
  */
 
-package my.zin.rashidi.android.fugumod;
+package my.zin.rashidi.android.fugumod.updater;
 
 import static android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE;
 import static android.app.DownloadManager.COLUMN_REASON;
@@ -32,6 +32,7 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static java.lang.String.format;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isFileExists;
 import static my.zin.rashidi.android.fugumod.utils.FuguModUtils.isMatchedSum;
+import my.zin.rashidi.android.fugumod.updater.R;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;

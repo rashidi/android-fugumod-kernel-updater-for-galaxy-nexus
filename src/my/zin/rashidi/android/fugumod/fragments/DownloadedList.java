@@ -8,8 +8,8 @@ import static android.os.Environment.getExternalStorageDirectory;
 import static java.lang.String.format;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
-import static my.zin.rashidi.android.fugumod.R.string.release_ref;
-import static my.zin.rashidi.android.fugumod.R.string.release_zip;
+import static my.zin.rashidi.android.fugumod.updater.R.string.release_ref;
+import static my.zin.rashidi.android.fugumod.updater.R.string.release_zip;
 import static org.apache.commons.io.FileUtils.listFiles;
 
 import java.io.File;
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import my.zin.rashidi.android.fugumod.FlashActivity;
-import my.zin.rashidi.android.fugumod.R;
+import my.zin.rashidi.android.fugumod.updater.R;
+import my.zin.rashidi.android.fugumod.updater.FlashActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
