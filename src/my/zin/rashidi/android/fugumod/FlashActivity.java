@@ -24,7 +24,7 @@ import com.stericson.RootTools.CommandCapture;
 
 /**
  * @author shidi
- * @version 1.5
+ * @version 1.7.0
  * @since 1.2.0
  */
 public class FlashActivity extends FragmentActivity {
@@ -41,7 +41,7 @@ public class FlashActivity extends FragmentActivity {
 		String release = sharedPreferences.getString(getString(R.string.release_zip), null);
 		
 		TextView tvStatus = (TextView) findViewById(R.id.textViewStatus);
-		tvStatus.setText("Flashing ");
+		tvStatus.setText(format("%s ", getString(R.string.flash_progress)));
 		
 		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
 		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
@@ -55,9 +55,9 @@ public class FlashActivity extends FragmentActivity {
 		
 		Button btnFlash = (Button) findViewById(R.id.buttonFlashKernel);
 		
-		if (!isRootAvailable()) { displayStatus("Flash Failed", "Root privilege is required.", true); } 
+		if (!isRootAvailable()) { displayStatus(getString(R.string.error), getString(R.string.error_root_required), true); } 
 		
-		else if (!isBusyboxAvailable()) { displayStatus("Flash Failed", "Busybox is required.", true); }
+		else if (!isBusyboxAvailable()) { displayStatus(getString(R.string.error), getString(R.string.error_busybox_required), true); }
 		
 		btnFlash.setEnabled(true);
 		
@@ -68,7 +68,7 @@ public class FlashActivity extends FragmentActivity {
 
 				String targetDir = format("%s/%s/", DIRECTORY_DOWNLOADS_FULL, release.replace(".zip", ""));
 				String image = format("%s/%s", targetDir, "boot.img");
-				String checksum = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
+//				String checksum = format("%s/%s.sha256sum", DIRECTORY_DOWNLOADS_FULL, release);
 				
 				try {
 					debugMode = true;
@@ -81,7 +81,7 @@ public class FlashActivity extends FragmentActivity {
 										format("mkdir %s", targetDir), 
 										format("%s unzip %s/%s -d %s", getWorkingToolbox(), DIRECTORY_DOWNLOADS_FULL, release, targetDir),
 										format("%s dd if=%s of=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot", getWorkingToolbox(), image),
-										format("rm -r %s %s", targetDir, checksum)
+										format("rm -r %s", targetDir)
 								)).waitForFinish();
 						
 						((Button) v).setText(getString(R.string.reboot));
@@ -91,8 +91,8 @@ public class FlashActivity extends FragmentActivity {
 					}
 					
 				} catch (Exception e) {
-					displayStatus("Flashing failed", e.getLocalizedMessage(), true);
-					Log.e(getString(R.string.app_name), "Flashing failed: ", e);
+					displayStatus(getString(R.string.error), e.getLocalizedMessage(), true);
+					Log.e(getString(R.string.app_name), String.format("%s ", getString(R.string.error)), e);
 				}
 			}
 		});
