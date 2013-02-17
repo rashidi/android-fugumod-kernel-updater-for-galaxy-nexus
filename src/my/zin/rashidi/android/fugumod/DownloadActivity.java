@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package my.zin.rashidi.android.fugumod;
 
 import static android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE;
@@ -45,200 +46,216 @@ import android.widget.TextView;
 
 /**
  * @author shidi
- * @version 1.3.0
- * @since 1.1.0
+ * @version 1.7.0
+ * @since 1.1.0 
  * 
  * Based on tutorial at http://android-er.blogspot.com/2011/07/check-downloadmanager-status-and-reason.html
  */
 public class DownloadActivity extends FragmentActivity {
 
-	private final String PREFERENCE_RELEASE_ID = "releaseId";
-	private final String DIRECTORY_DOWNLOADS_FULL = format("/%s/%s", getExternalStorageDirectory().getPath(), DIRECTORY_DOWNLOADS);
+    private final String PREFERENCE_RELEASE_ID = "releaseId";
+    private final String DIRECTORY_DOWNLOADS_FULL = format("/%s/%s", getExternalStorageDirectory()
+            .getPath(), DIRECTORY_DOWNLOADS);
 
-	private SharedPreferences preferenceManager;
-	private DownloadManager downloadManager;
-	
-	private	String release;
-	private String targetUrl;
-	
-	@Override
-	protected void onCreate(Bundle arg0) {
-		
-		super.onCreate(arg0);
-		setContentView(R.layout.activity_download);
-		
-		preferenceManager = getDefaultSharedPreferences(this);
-		downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-		
-		SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.release_ref), 0);
-		
-		targetUrl = sharedPreferences.getString(getString(R.string.target_url), null);
-		release = sharedPreferences.getString(getString(R.string.release_zip), null);
+    private SharedPreferences preferenceManager;
+    private DownloadManager downloadManager;
 
-		TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
-		txtViewRelease.setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
-		
-		if (!isFileExists(getFile())) { requestDownload(release); }
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(downloadReceiver);
-	}
+    private String release;
+    private String targetUrl;
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		checkDownloadStatus();
-		
-		IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_COMPLETE);
-		registerReceiver(downloadReceiver, intentFilter);
-	}
-	
-	private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			checkDownloadStatus();
-		}
-	};
-	
-	private void checkDownloadStatus() {
-		DownloadManager.Query query = new DownloadManager.Query();
-		long id = preferenceManager.getLong(PREFERENCE_RELEASE_ID, 0);
-		query.setFilterById(id);
-		
-		Cursor cursor = downloadManager.query(query);
-		if (cursor.moveToFirst()) {
-			int columnIndex = cursor.getColumnIndex(COLUMN_STATUS);
-			int status = cursor.getInt(columnIndex);
-			int columnReason = cursor.getColumnIndex(COLUMN_REASON);
-			int reason = cursor.getInt(columnReason);
-			
-			switch (status) {
-			case STATUS_FAILED:
-				String failedReason = "";
-				
-				switch (reason) {
-				case ERROR_CANNOT_RESUME:
-					failedReason = "ERROR_CANNOT_RESUME";
-					break;
+    @Override
+    protected void onCreate(Bundle arg0) {
 
-				case ERROR_DEVICE_NOT_FOUND:
-					failedReason = "ERROR_DEVICE_NOT_FOUND";
-					break;
-					
-				case ERROR_FILE_ALREADY_EXISTS:
-					failedReason = "ERROR_FILE_ALREADY_EXISTS";
-					break;
-					
-				case ERROR_FILE_ERROR:
-					failedReason = "ERROR_FILE_ERROR";
-					break;
-					
-				case ERROR_HTTP_DATA_ERROR:
-					failedReason = "ERROR_HTTP_DATA_ERROR";
-					break;
-					
-				case ERROR_INSUFFICIENT_SPACE:
-					failedReason = "ERROR_INSUFFICIENT_SPACE";
-					break;
-					
-				case ERROR_TOO_MANY_REDIRECTS:
-					failedReason = "ERROR_TOO_MANY_REDIRECTS";
-					break;
-					
-				case ERROR_UNHANDLED_HTTP_CODE:
-					failedReason = "ERROR_UNHANDLED_HTTP_CODE";
-					break;
-					
-				case ERROR_UNKNOWN:
-					failedReason = "ERROR_UNKNOWN";
-					break;
-				}
-				
-				displayStatus("FAILED", failedReason);
-				break;
-				
-			case STATUS_PAUSED:
-				String pausedReason = "";
-				
-				switch (reason) {
-				case PAUSED_QUEUED_FOR_WIFI:
-					pausedReason = "PAUSED_QUEUED_FOR_WIFI";
-					break;
+        super.onCreate(arg0);
+        setContentView(R.layout.activity_download);
 
-				case PAUSED_UNKNOWN:
-					pausedReason = "PAUSED_UNKNOWN";
-					break;
-					
-				case PAUSED_WAITING_FOR_NETWORK:
-					pausedReason = "PAUSED_WAITING_FOR_NETWORK";
-					break;
-					
-				case PAUSED_WAITING_TO_RETRY:
-					pausedReason = "PAUSED_WAITING_FOR_RETRY";
-					break;
-				}
+        preferenceManager = getDefaultSharedPreferences(this);
+        downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 
-				displayStatus("Paused", pausedReason);
-				break;
-				
-			case STATUS_PENDING:
-				break;
-				
-			case STATUS_RUNNING:
-				break;
-				
-			case STATUS_SUCCESSFUL:
-				
-				if (!isFileExists(getSumFile())) { 
-					requestDownload(format("%s.sha256sum", release));
-				}
-				
-				else {
-					if (verifyCheckSum()) {
-						Intent intent = new Intent(this, FlashActivity.class);
-						startActivity(intent);
-					} else {
-						displayStatus("Failed", "Checksum does not match");
-					}
-				}
-				break;
-			}
-		}
-	}
-	
-	private void displayStatus(String status, String reason) {
-		
-		final TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
-		
-		if (reason != null) { tvFlashCompleted.setText(format("%s: %s", status, reason)); } 
-		
-		else { tvFlashCompleted.setText(format("%s", status)); }
-	}
-		
-	private void requestDownload(String filename) {
-		
-		DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s", targetUrl, filename)));
-		request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
-		request.setDescription(filename);
-		request.allowScanningByMediaScanner();
-		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-		request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, filename);
-		
-		long id = downloadManager.enqueue(request);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.release_ref),
+                0);
 
-		Editor editor = preferenceManager.edit();
-		editor.putLong(PREFERENCE_RELEASE_ID, id);
-		editor.commit();
-	}
-	
-	private boolean verifyCheckSum() { return isMatchedSum(getFile()); }
-	
-	private String getFile() { return (release != null) ? format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release) : null; }
-	
-	private String getSumFile() { return (getFile() != null) ? format("%s.sha256sum", getFile()) : null; } 
+        targetUrl = sharedPreferences.getString(getString(R.string.target_url), null);
+        release = sharedPreferences.getString(getString(R.string.release_zip), null);
+
+        TextView txtViewRelease = (TextView) findViewById(R.id.textViewRelease);
+        txtViewRelease
+                .setText(release.substring(release.lastIndexOf("_") + 1, release.indexOf("-")));
+
+        if (!isFileExists(getFile())) {
+            requestDownload(release);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(downloadReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        checkDownloadStatus();
+
+        IntentFilter intentFilter = new IntentFilter(ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(downloadReceiver, intentFilter);
+    }
+
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkDownloadStatus();
+        }
+    };
+
+    private void checkDownloadStatus() {
+        DownloadManager.Query query = new DownloadManager.Query();
+        long id = preferenceManager.getLong(PREFERENCE_RELEASE_ID, 0);
+        query.setFilterById(id);
+
+        Cursor cursor = downloadManager.query(query);
+        if (cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndex(COLUMN_STATUS);
+            int status = cursor.getInt(columnIndex);
+            int columnReason = cursor.getColumnIndex(COLUMN_REASON);
+            int reason = cursor.getInt(columnReason);
+
+            switch (status) {
+                case STATUS_FAILED:
+                    String failedReason = "";
+
+                    switch (reason) {
+                        case ERROR_CANNOT_RESUME:
+                            failedReason = "ERROR_CANNOT_RESUME";
+                            break;
+
+                        case ERROR_DEVICE_NOT_FOUND:
+                            failedReason = "ERROR_DEVICE_NOT_FOUND";
+                            break;
+
+                        case ERROR_FILE_ALREADY_EXISTS:
+                            failedReason = "ERROR_FILE_ALREADY_EXISTS";
+                            break;
+
+                        case ERROR_FILE_ERROR:
+                            failedReason = "ERROR_FILE_ERROR";
+                            break;
+
+                        case ERROR_HTTP_DATA_ERROR:
+                            failedReason = "ERROR_HTTP_DATA_ERROR";
+                            break;
+
+                        case ERROR_INSUFFICIENT_SPACE:
+                            failedReason = "ERROR_INSUFFICIENT_SPACE";
+                            break;
+
+                        case ERROR_TOO_MANY_REDIRECTS:
+                            failedReason = "ERROR_TOO_MANY_REDIRECTS";
+                            break;
+
+                        case ERROR_UNHANDLED_HTTP_CODE:
+                            failedReason = "ERROR_UNHANDLED_HTTP_CODE";
+                            break;
+
+                        case ERROR_UNKNOWN:
+                            failedReason = "ERROR_UNKNOWN";
+                            break;
+                    }
+
+                    displayStatus("FAILED", failedReason);
+                    break;
+
+                case STATUS_PAUSED:
+                    String pausedReason = "";
+
+                    switch (reason) {
+                        case PAUSED_QUEUED_FOR_WIFI:
+                            pausedReason = "PAUSED_QUEUED_FOR_WIFI";
+                            break;
+
+                        case PAUSED_UNKNOWN:
+                            pausedReason = "PAUSED_UNKNOWN";
+                            break;
+
+                        case PAUSED_WAITING_FOR_NETWORK:
+                            pausedReason = "PAUSED_WAITING_FOR_NETWORK";
+                            break;
+
+                        case PAUSED_WAITING_TO_RETRY:
+                            pausedReason = "PAUSED_WAITING_FOR_RETRY";
+                            break;
+                    }
+
+                    displayStatus("Paused", pausedReason);
+                    break;
+
+                case STATUS_PENDING:
+                    break;
+
+                case STATUS_RUNNING:
+                    break;
+
+                case STATUS_SUCCESSFUL:
+
+                    if (!isFileExists(getSumFile())) {
+                        requestDownload(format("%s.sha256sum", release));
+                    }
+                    else {
+                        startFlashActivity();
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void displayStatus(String status, String reason) {
+
+        final TextView tvFlashCompleted = (TextView) findViewById(R.id.textViewFlashCompleted);
+
+        if (reason != null) {
+            tvFlashCompleted.setText(format("%s: %s", status, reason));
+        }
+
+        else {
+            tvFlashCompleted.setText(format("%s", status));
+        }
+    }
+
+    private void requestDownload(String filename) {
+
+        DownloadManager.Request request = new DownloadManager.Request(parse(format("%s/%s",
+                targetUrl, filename)));
+        request.setTitle(format("%s %s", getString(R.string.app_name), "Download"));
+        request.setDescription(filename);
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, filename);
+
+        long id = downloadManager.enqueue(request);
+
+        Editor editor = preferenceManager.edit();
+        editor.putLong(PREFERENCE_RELEASE_ID, id);
+        editor.commit();
+    }
+
+    private void startFlashActivity() {
+        if (isMatchedSum(getFile())) {
+            downloadManager.remove(preferenceManager.getLong(PREFERENCE_RELEASE_ID, 0));
+            Intent intent = new Intent(this, FlashActivity.class);
+            startActivity(intent);
+        } else {
+            displayStatus("Failed", "Checksum does not match");
+        }
+    }
+
+    private String getFile() {
+        return (release != null) ? format("%s/%s", DIRECTORY_DOWNLOADS_FULL, release) : null;
+    }
+
+    private String getSumFile() {
+        return (getFile() != null) ? format("%s.sha256sum", getFile()) : null;
+    }
 }
