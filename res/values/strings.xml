@@ -1,16 +1,24 @@
 <resources>
+
     <string name="app_name">FuguMod Updater</string>
-    <string name="title_stable_version">Stable Version</string>
-    <string name="title_testing_version">Testing Version</string>
+    <string name="downloading">Downloading</string>
+    <string name="error">Error:</string>
+    <string name="error_busybox_required">Busybox is required.</string>
+    <string name="error_failed_get_available_versions">Failed to get available versions</string>
+    <string name="error_root_required">Root privilege is required.</string>
+    <string name="flash_completed">Flash completed. Please restart your device</string>
+    <string name="flash_kernel">Flash Kernel</string>
+    <string name="flash_progress">Flashing</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_fugu_mod">FuguMod Updater</string>
-    <string name="url">http://fugumod.org/galaxy_nexus/</string>
+    <string name="reboot">Reboot Device</string>
     <string name="release_ref">release_ref</string>
     <string name="release_zip">release_zip</string>
-    <string name="target_url">target_url</string>
     <string name="root">Root</string>
-    <string name="downloading">Downloading</string>
-    <string name="flash_kernel">Flash Kernel</string>
-    <string name="flash_completed">Flash completed. Please restart your device</string>
-    <string name="reboot">Reboot Device</string>
+    <string name="target_url">target_url</string>
+    <string name="title_activity_fugu_mod">FuguMod Updater</string><string name="title_downloaded">Downloaded</string>
+    <string name="title_stable_version">Stable Version</string>
+    <string name="title_testing_version">Testing Version</string>
+    <string name="url">http://fugumod.org/galaxy_nexus/</string>
+    
+
 </resources>

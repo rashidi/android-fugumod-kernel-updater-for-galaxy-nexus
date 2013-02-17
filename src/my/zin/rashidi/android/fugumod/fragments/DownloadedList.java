@@ -15,7 +15,6 @@ import static org.apache.commons.io.FileUtils.listFiles;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import my.zin.rashidi.android.fugumod.FlashActivity;
